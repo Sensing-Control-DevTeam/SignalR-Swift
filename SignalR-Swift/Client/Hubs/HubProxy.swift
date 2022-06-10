@@ -31,7 +31,15 @@ public class HubProxy: HubProxyProtocol {
             return nil
         }
         
-        return self.subscriptions[eventName] ?? self.subscriptions.updateValue(handler, forKey: eventName) ?? handler
+        if let currentValue = self.subscriptions[eventName] {
+            return currentValue
+        }
+        else if let updateValue = self.subscriptions.updateValue(handler, forKey: eventName) {
+            return updateValue
+        }
+        else {
+            return handler
+        }
     }
 
     public func invokeEvent(eventName: String, withArgs args: [Any]) {
